@@ -1,0 +1,11 @@
+{
+  "name": "rippled-dashboard",
+  "description": "A simple dashboard app for rippled",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-contrib-sass": "*",
+    "sass": "*"
+  }
+}

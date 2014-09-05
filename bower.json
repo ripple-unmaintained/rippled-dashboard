@@ -1,0 +1,13 @@
+{
+  "name": "rippled-dashboard",
+  "version": "0.0.1",
+  "authors": [
+    "Torrie Fischer <torrie@ripple.com>"
+  ],
+  "description": "Dashboard app for rippled",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "d3": "~3.4.11"
+  }
+}
