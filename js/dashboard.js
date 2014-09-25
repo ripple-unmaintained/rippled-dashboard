@@ -1,9 +1,11 @@
-function drawGraph(rootNode, metricName) {
-  var endpoint = 'http://localhost:8181/metric/'+metricName;
+function drawGraph(rootNode, endpoint) {
+
+  var width = rootNode.node().offsetWidth;
+  var height = rootNode.node().offsetHeight;
 
   var margin = {top: 20, right: 50, bottom: 20, left: 50},
-      width = window.innerWidth - margin.left - margin.right,
-      height = 180 - margin.top - margin.bottom;
+      width = width - margin.left - margin.right,
+      height = height - margin.top - margin.bottom;
 
   var x = d3.scale.linear()
       .range([0, width])
@@ -35,12 +37,6 @@ function drawGraph(rootNode, metricName) {
 
   var yRender = svg.append('g')
       .attr('class', 'y axis');
-  yRender.append('text')
-      .attr('transform', 'rotate(-90)')
-      .attr('y', 6)
-      .attr('dy', '.71em')
-      .style('text-anchor', 'end')
-      .text('Value ('+metricName+')');
 
   d3.json(endpoint, function(error, json) {
     if (error) return console.warn(error);
@@ -63,15 +59,31 @@ function drawGraph(rootNode, metricName) {
   });
 }
 
-d3.json('http://localhost:8181/metric/', function(error, json) {
-    if (error) return console.warn(error);
-    json.sort();
-    json.forEach(function(graphType) {
-      d3.json('http://localhost:8181/metric/'+graphType+'/', function(error, graphJson) {
-        graphJson.sort();
-        graphJson.forEach(function(graph) {
-          drawGraph(d3.select('body'), graphType+'/'+graph);
+function addGraphToMenu(uri, label) {
+  var menuItem = d3.select('#menu').append('core-item');
+  menuItem.attr('label', label).attr('data-uri', uri);
+  //d3.select('#menu').append('metrics-chart').attr('endpoint', uri);
+  //console.log("added");
+}
+
+$(document).ready(function() {
+  d3.json('http://localhost:8181/metric/', function(error, json) {
+      if (error) return console.warn(error);
+      json.sort();
+      json.forEach(function(graphType) {
+        d3.json('http://localhost:8181/metric/'+graphType+'/', function(error, graphJson) {
+          graphJson.sort();
+          graphJson.forEach(function(graph) {
+            addGraphToMenu('http://localhost:8181/metric/'+graphType+'/'+graph, graph);
+          });
         });
       });
-    });
+  });
+  $('#menu').on('core-select', function(e) {
+    if (e.originalEvent.detail.isSelected) {
+      var selectedItem = $(e.originalEvent.detail.item);
+      $('#chart-canvas').attr('endpoint', selectedItem.attr('data-uri'));
+      $('#chart-title').text(selectedItem.attr('label'));
+    }
+  });
 });

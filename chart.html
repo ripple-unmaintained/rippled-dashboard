@@ -1,0 +1,41 @@
+<polymer-element name="metrics-chart" attributes="endpoint">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      #canvas {
+        height: 100%;
+        width: 100%;
+      }
+      .axis path,
+      .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+      }
+
+      .x.axis path {
+        display: none;
+      }
+
+      .line {
+        fill: none;
+        stroke: steelblue;
+        stroke-width: 1.5px;
+      }
+    </style>
+    <content select="h1"></content>
+    <div id="canvas"></div>
+  </template>
+  <script>
+    Polymer('metrics-chart', {
+      endpointChanged: function(oldValue, newValue) {
+        while (this.$.canvas.firstChild) {
+          this.$.canvas.removeChild(this.$.canvas.firstChild);
+        }
+        drawGraph(d3.select(this.$.canvas), newValue);
+      }
+    });
+  </script>
+</polymer-element>

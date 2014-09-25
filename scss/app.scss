@@ -1,21 +1,32 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 body {
-  font: 10px sans-serif;
+  font-family: sans-serif;
 }
 
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
+core-scaffold {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 
-.x.axis path {
-  display: none;
+.content {
+  background-color: #fff;
+  height: 5000px;
+  padding: 20px;
 }
 
-.line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 1.5px;
+core-scaffold[mode=cover] .content {
+  margin: 20px 100px 20px 0;
+}
+
+#chart-canvas {
+  width: 100%;
+  height: 300px;
 }
 

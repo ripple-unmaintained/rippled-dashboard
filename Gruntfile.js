@@ -4,7 +4,10 @@ module.exports = function(grunt) {
     sass: {
       dist: {
         options: {
-          style: 'compressed'
+          style: 'compressed',
+          loadPath: [
+            'bower_components/foundation/scss/'
+          ]
         },
         files: {
           'css/app.css': 'scss/app.scss'
