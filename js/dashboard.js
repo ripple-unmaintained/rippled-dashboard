@@ -47,7 +47,7 @@ function drawGraph(rootNode, metricName) {
     var graphData = [];
     jobs = d3.entries(json);
     jobs.forEach(function(d) {
-        graphData.push({seconds: +d['key'], value: +d['value']});
+        graphData.push({seconds: +d['key'], value: +d.value.average});
     });
 
     x.domain(d3.extent(graphData, function(d) {return d.seconds}));
