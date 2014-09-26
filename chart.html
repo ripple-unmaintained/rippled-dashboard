@@ -31,10 +31,16 @@
   <script>
     Polymer('metrics-chart', {
       endpointChanged: function(oldValue, newValue) {
-        while (this.$.canvas.firstChild) {
-          this.$.canvas.removeChild(this.$.canvas.firstChild);
-        }
-        drawGraph(d3.select(this.$.canvas), newValue);
+        if (this.interval)
+          clearInterval(this.interval);
+        this.interval = setInterval(function() {
+          // FIXME: haha yeah we're just completely regenerating the SVG every
+          // second.
+          while (this.$.canvas.firstChild) {
+            this.$.canvas.removeChild(this.$.canvas.firstChild);
+          }
+          drawGraph(d3.select(this.$.canvas), newValue);
+        }.bind(this), 1000);
       }
     });
   </script>

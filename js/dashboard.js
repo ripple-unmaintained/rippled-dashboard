@@ -43,7 +43,7 @@ function drawGraph(rootNode, endpoint) {
     var graphData = [];
     jobs = d3.entries(json);
     jobs.forEach(function(d) {
-        graphData.push({seconds: +d['key'], value: +d.value.average});
+        graphData.unshift({seconds: +d['key'], value: +d.value.average});
     });
 
     x.domain(d3.extent(graphData, function(d) {return d.seconds}));
@@ -62,8 +62,6 @@ function drawGraph(rootNode, endpoint) {
 function addGraphToMenu(uri, label) {
   var menuItem = d3.select('#menu').append('core-item');
   menuItem.attr('label', label).attr('data-uri', uri);
-  //d3.select('#menu').append('metrics-chart').attr('endpoint', uri);
-  //console.log("added");
 }
 
 $(document).ready(function() {
