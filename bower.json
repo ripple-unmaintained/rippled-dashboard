@@ -11,6 +11,7 @@
     "d3": "~3.4.11",
     "polymer": "Polymer/polymer#~0.4.1",
     "paper-elements": "Polymer/paper-elements#~0.4.1",
-    "core-scaffold": "Polymer/core-scaffold#~0.4.1"
-  }
+    "core-scaffold": "Polymer/core-scaffold#~0.4.1",
+    "jquery": "~2.1.1"
+  },
 }
