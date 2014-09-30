@@ -1,11 +1,11 @@
-<polymer-element name="metrics-chart" attributes="endpoint">
+<polymer-element name="metrics-chart" attributes="endpoint label resolution">
   <template>
     <style>
       :host {
         display: block;
       }
       #canvas {
-        height: 100%;
+        height: 100px;
         width: 100%;
       }
       .axis path,
@@ -25,22 +25,50 @@
         stroke-width: 1.5px;
       }
     </style>
-    <content select="h1"></content>
+    <core-toolbar>
+    <span flex><content select="h1"><h1>{{title}}</h1></content></span>
+      <core-menu-button icon="settings" selected="{{resolution}}">
+        <core-item data-resolution="seconds" label="Seconds"></core-item>
+        <core-item data-resolution="minutes" label="Minutes"></core-item>
+        <core-item data-resolution="hours" label="Hours"></core-item>
+        <core-item data-resolution="days" label="Days"></core-item>
+      </core-menu-button>
+      <core-icon-button icon="close" on-click="{{closeHandler}}"></core-icon-button>
+    </core-toolbar>
     <div id="canvas"></div>
   </template>
   <script>
     Polymer('metrics-chart', {
+      resolution: 0,
+      endpoint: null,
+
+      closeHandler: function(event, detail, sender) {
+        this.fire('close');
+      },
+
+      resolutionChanged: function(oldValue, newValue) {
+        this.refresh();
+      },
+
+      refresh: function() {
+        // FIXME: haha yeah we're just completely regenerating the SVG every
+        // second.
+        while (this.$.canvas.firstChild) {
+          this.$.canvas.removeChild(this.$.canvas.firstChild);
+        }
+        console.log('refresh');
+        drawGraph(d3.select(this.$.canvas), this.endpoint);
+      },
+
       endpointChanged: function(oldValue, newValue) {
+        this.refresh();
         if (this.interval)
           clearInterval(this.interval);
-        this.interval = setInterval(function() {
-          // FIXME: haha yeah we're just completely regenerating the SVG every
-          // second.
-          while (this.$.canvas.firstChild) {
-            this.$.canvas.removeChild(this.$.canvas.firstChild);
-          }
-          drawGraph(d3.select(this.$.canvas), newValue);
-        }.bind(this), 1000);
+        this.interval = setInterval(this.refresh.bind(this), 1000);
+      },
+      detached: function() {
+        if (this.interval)
+          clearInterval(this.interval);
       }
     });
   </script>

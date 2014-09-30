@@ -27,6 +27,9 @@ module.exports = function(grunt) {
       }
     },
     uglify: {
+      options: {
+        sourceMap: true
+      },
       dist: {
         files: {
           'build/app.js': [
@@ -34,7 +37,7 @@ module.exports = function(grunt) {
             'bower_components/d3/d3.js',
             'js/dashboard.js'
           ]
-        }
+        },
       }
     },
     vulcanize: {
@@ -46,6 +49,20 @@ module.exports = function(grunt) {
           'build/components.html': 'components.html'
         }
       }
+    },
+    watch: {
+      scripts: {
+        files: ['js/dashboard.js'],
+        tasks: ['uglify:dist']
+      },
+      components: {
+        files: ['chart.html', 'components.html'],
+        tasks: ['vulcanize']
+      },
+      scss: {
+        files: ['scss/*.scss'],
+        tasks: ['sass:dist']
+      }
     }
   });
 
@@ -53,5 +70,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-vulcanize');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.registerTask('default', ['exec:install-index', 'vulcanize', 'uglify:dist', 'sass:dist', 'exec:compile-bundle']);
 }

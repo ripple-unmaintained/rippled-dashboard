@@ -1,11 +1,7 @@
 function drawGraph(rootNode, endpoint) {
 
-  var width = rootNode.node().offsetWidth;
-  var height = rootNode.node().offsetHeight;
-
-  var margin = {top: 20, right: 50, bottom: 20, left: 50},
-      width = width - margin.left - margin.right,
-      height = height - margin.top - margin.bottom;
+  var width = rootNode.node().clientWidth;
+  var height = rootNode.node().clientHeight;
 
   var x = d3.scale.linear()
       .range([0, width])
@@ -26,10 +22,9 @@ function drawGraph(rootNode, endpoint) {
       .y(function(d) { return y(d.value); });
 
   var svg = rootNode.append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      .attr("width", width)
+      .attr("height", height)
+    .append("g");
 
   var xRender = svg.append('g')
       .attr('class', 'x axis')
@@ -42,6 +37,7 @@ function drawGraph(rootNode, endpoint) {
     if (error) return console.warn(error);
     var graphData = [];
     jobs = d3.entries(json);
+
     jobs.forEach(function(d) {
         graphData.unshift({seconds: +d['key'], value: +d.value.average});
     });
@@ -60,8 +56,24 @@ function drawGraph(rootNode, endpoint) {
 }
 
 function addGraphToMenu(uri, label) {
-  var menuItem = d3.select('#menu').append('core-item');
-  menuItem.attr('label', label).attr('data-uri', uri);
+  var menuItem = d3.select('#menu').append('p');
+  var addButton = menuItem.append('core-icon-button');
+  addButton.attr('icon', 'add');
+  addButton.attr('data-label', label).attr('data-uri', uri);
+  addButton.append('span').text(label);
+
+  addButton.on('click', function(e) {
+    addGraphToCanvas($(this).attr('data-label'), $(this).attr('data-uri'));
+  });
+}
+
+function addGraphToCanvas(label, uri) {
+  var graphCanvas = d3.select('#canvas').append('metrics-chart');
+  graphCanvas.attr('endpoint', uri);
+  graphCanvas.attr('title', label);
+  graphCanvas.on('close', function() {
+    graphCanvas.remove();
+  });
 }
 
 $(document).ready(function() {
@@ -81,7 +93,7 @@ $(document).ready(function() {
     if (e.originalEvent.detail.isSelected) {
       var selectedItem = $(e.originalEvent.detail.item);
       $('#chart-canvas').attr('endpoint', selectedItem.attr('data-uri'));
-      $('#chart-title').text(selectedItem.attr('label'));
+      $('#chart-title').text(selectedItem.attr('data-label'));
     }
   });
 });

@@ -13,5 +13,8 @@
     "paper-elements": "Polymer/paper-elements#~0.4.1",
     "core-scaffold": "Polymer/core-scaffold#~0.4.1",
     "jquery": "~2.1.1"
+  },
+  "devDependencies": {
+    "core-menu-button": "Polymer/core-menu-button#~0.4.1"
   }
 }
