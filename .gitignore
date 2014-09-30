@@ -4,3 +4,4 @@ css
 .sass-cache
 build
 dist
+*.swp
