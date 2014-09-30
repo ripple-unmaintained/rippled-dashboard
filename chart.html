@@ -7,6 +7,7 @@
       #canvas {
         height: 100px;
         width: 100%;
+        padding: 10px;
       }
       .axis path,
       .axis line {
@@ -38,38 +39,6 @@
     <div id="canvas"></div>
   </template>
   <script>
-    Polymer('metrics-chart', {
-      resolution: 0,
-      endpoint: null,
-
-      closeHandler: function(event, detail, sender) {
-        this.fire('close');
-      },
-
-      resolutionChanged: function(oldValue, newValue) {
-        this.refresh();
-      },
-
-      refresh: function() {
-        // FIXME: haha yeah we're just completely regenerating the SVG every
-        // second.
-        while (this.$.canvas.firstChild) {
-          this.$.canvas.removeChild(this.$.canvas.firstChild);
-        }
-        console.log('refresh');
-        drawGraph(d3.select(this.$.canvas), this.endpoint);
-      },
-
-      endpointChanged: function(oldValue, newValue) {
-        this.refresh();
-        if (this.interval)
-          clearInterval(this.interval);
-        this.interval = setInterval(this.refresh.bind(this), 1000);
-      },
-      detached: function() {
-        if (this.interval)
-          clearInterval(this.interval);
-      }
-    });
+    Chart();
   </script>
 </polymer-element>
