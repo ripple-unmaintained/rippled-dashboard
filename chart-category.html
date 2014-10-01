@@ -1,0 +1,19 @@
+<polymer-element name="chart-category" attributes="label toggle opened">
+  <template>
+    <style>
+      div {
+        background-color: #ddd;
+        padding: 5px;
+      }
+    </style>
+    <div>
+      <core-icon-button flex on-click="{{toggle}}" id="toggleButton" icon="unfold-less">{{label}}</core-icon-button>
+    </div>
+    <core-collapse id="collapse" opened="{{opened}}">
+      <content></content>
+    </core-collapse>
+  </template>
+  <script>
+    Category();
+  </script>
+</polymer-element>

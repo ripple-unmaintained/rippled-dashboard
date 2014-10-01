@@ -1,5 +1,14 @@
-function addGraphToMenu(uri, label) {
-  var menuItem = d3.select('#menu').append('p');
+var categories = {};
+
+function addGraphToMenu(uri, label, category) {
+  if (!(category in categories)) {
+    var collapse = d3.select('#menu').append('chart-category');
+    collapse.attr('label', category);
+    categories[category] = collapse;
+  }
+
+  var collapse = categories[category];
+  var menuItem = collapse.append('p');
   var addButton = menuItem.append('core-icon-button');
   addButton.attr('icon', 'add');
   addButton.attr('data-label', label).attr('data-uri', uri);
@@ -27,19 +36,29 @@ $(document).ready(function() {
         d3.json('http://localhost:8181/metric/'+graphType+'/', function(error, graphJson) {
           graphJson.sort();
           graphJson.forEach(function(graph) {
-            addGraphToMenu('http://localhost:8181/metric/'+graphType+'/'+graph, graph);
+            var categoryName = graphType;
+            addGraphToMenu('http://localhost:8181/metric/'+graphType+'/'+graph, graph, categoryName);
           });
         });
       });
   });
-  $('#menu').on('core-select', function(e) {
-    if (e.originalEvent.detail.isSelected) {
-      var selectedItem = $(e.originalEvent.detail.item);
-      $('#chart-canvas').attr('endpoint', selectedItem.attr('data-uri'));
-      $('#chart-title').text(selectedItem.attr('data-label'));
+});
+
+var Category = function() {
+  Polymer('chart-category', {
+    label: "Uncategorized",
+    opened: true,
+    openedChanged: function(oldValue, newValue) {
+      if (newValue)
+        this.$.toggleButton.icon = "unfold-less";
+      else
+        this.$.toggleButton.icon = "unfold-more";
+    },
+    toggle: function() {
+      this.opened = !this.opened;
     }
   });
-});
+}
 
 var Chart = function() {
   Polymer('metrics-chart', {
