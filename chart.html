@@ -25,9 +25,13 @@
         stroke: steelblue;
         stroke-width: 1.5px;
       }
+
+      h2 {
+        height: 1em;
+      }
     </style>
     <core-toolbar>
-    <span flex><content select="h1"><h1>{{title}}</h1></content></span>
+    <span flex><h2>{{title}}</h2></span>
       <core-menu-button icon="schedule" selected="{{resolution}}">
         <core-item data-resolution="seconds" label="Seconds"></core-item>
         <core-item data-resolution="minutes" label="Minutes"></core-item>
