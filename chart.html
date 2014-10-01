@@ -1,4 +1,4 @@
-<polymer-element name="metrics-chart" attributes="endpoint label resolution">
+<polymer-element name="metrics-chart" attributes="endpoint label resolution aggregation">
   <template>
     <style>
       :host {
@@ -28,11 +28,16 @@
     </style>
     <core-toolbar>
     <span flex><content select="h1"><h1>{{title}}</h1></content></span>
-      <core-menu-button icon="settings" selected="{{resolution}}">
+      <core-menu-button icon="schedule" selected="{{resolution}}">
         <core-item data-resolution="seconds" label="Seconds"></core-item>
         <core-item data-resolution="minutes" label="Minutes"></core-item>
         <core-item data-resolution="hours" label="Hours"></core-item>
         <core-item data-resolution="days" label="Days"></core-item>
+      </core-menu-button>
+      <core-menu-button icon="drive-fusiontable" selected="0" on-core-select="{{selectAggregation}}">
+        <core-item data-attrname="average" label="Average"></core-item>
+        <core-item data-attrname="max" label="Maximum"></core-item>
+        <core-item data-attrname="min" label="Minimum"></core-item>
       </core-menu-button>
       <core-icon-button icon="close" on-click="{{closeHandler}}"></core-icon-button>
     </core-toolbar>

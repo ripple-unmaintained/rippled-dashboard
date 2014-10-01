@@ -54,6 +54,15 @@ var Chart = function() {
       this.refresh();
     },
 
+    _aggProp: 'average',
+
+    selectAggregation: function(e, detail) {
+      if (detail.isSelected) {
+        this._aggProp = d3.select(detail.item).attr('data-attrname');
+        this.redraw();
+      }
+    },
+
     domReady: function() {
       var width = this.$.canvas.clientWidth - 20;
       var height = this.$.canvas.clientHeight - 20;
@@ -69,7 +78,7 @@ var Chart = function() {
           .orient("left");
       this.line = d3.svg.line()
           .x(function(d) { return this.xScale(d.key); }.bind(this))
-          .y(function(d) { return this.yScale(d.value.average); }.bind(this));
+          .y(function(d) { return this.yScale(d.value[this._aggProp]); }.bind(this));
       var svg = d3.select(this.$.canvas).append("svg")
           .attr("width", width)
           .attr("height", height)
@@ -80,20 +89,29 @@ var Chart = function() {
       this.yRender = svg.append('g')
           .attr('class', 'y axis');
       this.path = svg.append('path');
+      this.redraw();
+    },
+
+    data: null,
+
+    redraw: function() {
+      if (this.path) {
+        this.xScale.domain(d3.extent(this.data, function(d) {return d.key}));
+        this.yScale.domain(d3.extent(this.data, function(d) {return d.value[this._aggProp]}.bind(this)));
+        this.xRender.call(this.xAxis);
+        this.yRender.call(this.yAxis);
+        this.path.datum(this.data)
+          .attr('class', 'line')
+          .attr('d', this.line);
+      }
     },
 
     refresh: function() {
-      if (this.endpoint && this.path) {
+      if (this.endpoint) {
         d3.json(this.endpoint, function(error, json) {
             if (error) return console.warn(error);
-            var data = d3.entries(json);
-            this.xScale.domain(d3.extent(data, function(d) {return d.key}));
-            this.yScale.domain(d3.extent(data, function(d) {return d.value.average}));
-            this.xRender.call(this.xAxis);
-            this.yRender.call(this.yAxis);
-            this.path.datum(data)
-              .attr('class', 'line')
-              .attr('d', this.line);
+            this.data = d3.entries(json);
+            this.redraw();
         }.bind(this));
       }
     },
@@ -104,6 +122,7 @@ var Chart = function() {
         clearInterval(this.interval);
       this.interval = setInterval(this.refresh.bind(this), 1000);
     },
+
     detached: function() {
       if (this.interval)
         clearInterval(this.interval);
