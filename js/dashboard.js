@@ -11,7 +11,7 @@ function addGraphToMenu(uri, label) {
 }
 
 function addGraphToCanvas(label, uri) {
-  var graphCanvas = d3.select('#canvas').append('metrics-chart');
+  var graphCanvas = d3.select('#canvas').insert('metrics-chart', ":first-child");
   graphCanvas.attr('endpoint', uri);
   graphCanvas.attr('title', label);
   graphCanvas.on('close', function() {
