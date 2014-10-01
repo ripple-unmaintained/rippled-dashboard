@@ -35,6 +35,7 @@ module.exports = function(grunt) {
           'build/app.js': [
             'bower_components/jquery/dist/jquery.js',
             'bower_components/d3/d3.js',
+            'bower_components/d3-plugins/horizon/horizon.js',
             'js/dashboard.js'
           ]
         },

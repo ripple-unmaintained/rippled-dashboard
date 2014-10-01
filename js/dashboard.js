@@ -64,45 +64,30 @@ var Chart = function() {
     },
 
     domReady: function() {
-      var width = this.$.canvas.clientWidth - 20;
-      var height = this.$.canvas.clientHeight - 20;
-      this.xScale = d3.scale.linear()
-          .range([0, width]);
-      this.yScale = d3.scale.linear()
-          .range([height, 0]);
-      this.xAxis = d3.svg.axis()
-          .scale(this.xScale)
-          .orient("bottom");
-      this.yAxis = d3.svg.axis()
-          .scale(this.yScale)
-          .orient("left");
-      this.line = d3.svg.line()
-          .x(function(d) { return this.xScale(d.key); }.bind(this))
-          .y(function(d) { return this.yScale(d.value[this._aggProp]); }.bind(this));
-      var svg = d3.select(this.$.canvas).append("svg")
+      var width = this.$.canvas.clientWidth;
+      var height = this.$.canvas.clientHeight;
+      this.chart = d3.horizon()
+          .width(width)
+          .height(height)
+          .bands(2)
+          .mode("offset")
+          .interpolate("basis");
+      this.svg = d3.select(this.$.canvas).append("svg")
           .attr("width", width)
           .attr("height", height)
-          .append("g");
-      this.xRender = svg.append('g')
-          .attr('class', 'x axis')
-          .attr('transform', 'translate(0,' + height + ')');
-      this.yRender = svg.append('g')
-          .attr('class', 'y axis');
-      this.path = svg.append('path');
       this.redraw();
     },
 
     data: null,
 
     redraw: function() {
-      if (this.path) {
-        this.xScale.domain(d3.extent(this.data, function(d) {return d.key}));
-        this.yScale.domain(d3.extent(this.data, function(d) {return d.value[this._aggProp]}.bind(this)));
-        this.xRender.call(this.xAxis);
-        this.yRender.call(this.yAxis);
-        this.path.datum(this.data)
-          .attr('class', 'line')
-          .attr('d', this.line);
+      if (this.svg && this.data) {
+        var data = this.data.map(function(d) {return d[this._aggProp];}, this);
+        var mean = data.reduce(function(p, v) { return p + v; }, 0) / data.length;
+        console.log(data.reduce(function(p, v) {return p+v}, 0));
+        data = data.map(function(d, i) {return [i, d - mean];});
+
+        this.svg.data([data]).call(this.chart);
       }
     },
 
@@ -110,7 +95,7 @@ var Chart = function() {
       if (this.endpoint) {
         d3.json(this.endpoint, function(error, json) {
             if (error) return console.warn(error);
-            this.data = d3.entries(json);
+            this.data = d3.entries(json).sort(function (a, b) { return Number(a[0])-Number(b[0]);}).map(function (d) {return d.value});
             this.redraw();
         }.bind(this));
       }
