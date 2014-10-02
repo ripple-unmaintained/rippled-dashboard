@@ -1,5 +1,17 @@
 var categories = {};
 
+var metricMap = {
+  'ledger_fetches': ['Ledger', 'Fetches'],
+  'jobq.acceptLedger.execute': ['Ledger', 'Consense'],
+  'jobq.advanceLedger.execute': ['Ledger', 'Advance'],
+  'jobq.publishNewLedger.execute': ['Ledger', 'Publish'],
+  'ios_latency': ['System', 'IO Latency'],
+  'peers': ['System', 'Peer Count'],
+  'jobq.heartbeat.execute': ['System', 'Heartbeat'],
+  'jobq.transaction.execute': ['Transactions', 'Execute'],
+  'jobq.updatePaths.execute': ['Transactions', 'Update Paths'],
+};
+
 function addGraphToMenu(uri, label, category) {
   if (!(category in categories)) {
     var collapse = d3.select('#menu').append('chart-category');
@@ -11,7 +23,7 @@ function addGraphToMenu(uri, label, category) {
   var menuItem = collapse.append('p');
   var addButton = menuItem.append('core-icon-button');
   addButton.attr('icon', 'add');
-  addButton.attr('data-label', label).attr('data-uri', uri);
+  addButton.attr('data-label', category+': '+label).attr('data-uri', uri);
   addButton.append('span').text(label);
 
   addButton.on('click', function(e) {
@@ -37,8 +49,13 @@ $(document).ready(function() {
         d3.json('http://localhost:8181/metric/'+graphType+'/', function(error, graphJson) {
           graphJson.sort();
           graphJson.forEach(function(graph) {
-            var categoryName = graphType;
-            addGraphToMenu('http://localhost:8181/metric/'+graphType+'/'+graph, graph, categoryName);
+            var label = graph;
+            var categoryName = 'Uncategorized';
+            if (graph in metricMap) {
+              categoryName = metricMap[graph][0];
+              label = metricMap[graph][1];
+            }
+            addGraphToMenu('http://localhost:8181/metric/'+graphType+'/'+graph, label, categoryName);
           });
         });
       });
