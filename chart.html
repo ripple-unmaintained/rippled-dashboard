@@ -33,6 +33,7 @@
     <data-model id="model" endpoint="{{endpoint}}" resolution="{{resolution}}" aggregation="{{aggregation}}">
     </data-model>
     <horizon-chart data="{{$.model.data}}"></horizon-chart>
+    <simple-gauge value="{{$.model.currentValue}}"></simple-gauge>
   </template>
   <script>
     Chart();

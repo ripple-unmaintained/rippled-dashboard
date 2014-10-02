@@ -1,0 +1,18 @@
+<polymer-element name="simple-gauge" attributes="label data value">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      div {text-align: center;}
+      big {font-size: xx-large;}
+    </style>
+    <div>
+      <big>{{value}}</big>
+      <p>{{label}}</p>
+    </div>
+  </template>
+  <script>
+    Gauge();
+  </script>
+</polymer-element>

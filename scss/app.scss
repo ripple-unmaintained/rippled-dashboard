@@ -28,7 +28,7 @@ core-scaffold[mode=cover] .content {
 }
 
 core-scaffold {
-  margin-bottom: 75px;
+  margin-bottom: 125px;
 }
 
 metrics-chart {
@@ -41,9 +41,13 @@ metrics-chart {
   bottom: 0;
   width: 100%;
   background-color: #afa;
-  height: 75px;
+  height: 125px;
 }
 
 .health-panel .health-content {
   padding: 1em;
+}
+
+.health-content simple-gauge {
+  float: right;
 }

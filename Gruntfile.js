@@ -57,7 +57,7 @@ module.exports = function(grunt) {
         tasks: ['uglify:dist']
       },
       components: {
-        files: ['chart.html', 'chart-category.html', 'components.html'],
+        files: ['gauge.html', 'data-model.html', 'chart.html', 'chart-category.html', 'components.html'],
         tasks: ['vulcanize']
       },
       scss: {

@@ -53,18 +53,22 @@ var DataModel = function() {
       if (this.interval)
         clearInterval(this.interval);
       this.interval = setInterval(this.refresh.bind(this), 1000);
+      console.log(newValue);
     },
+
     detached: function() {
       if (this.interval)
         clearInterval(this.interval);
     },
 
     rawData: null,
+    currentValue: 0,
     refresh: function() {
       if (this.endpoint) {
         d3.json(this.endpoint, function(error, json) {
             if (error) return console.warn(error);
             this.rawData = d3.entries(json).sort(function (a, b) { return Number(a[0])-Number(b[0]);}).map(function (d) {return d.value});
+            this.currentValue = this.rawData[this.rawData.length-1][this.aggregation];
             this.aggregate();
         }.bind(this));
       }
@@ -104,11 +108,22 @@ var Category = function() {
   });
 }
 
+var Gauge = function() {
+  Polymer('simple-gauge', {
+    data: [],
+    value: 0,
+    label: "",
+    dataChanged: function(oldValue, newValue) {
+      this.value = newValue[0][1];
+      console.log('gauge poll');
+    }
+  });
+}
+
 var HorizonChart = function() {
   Polymer('horizon-chart', {
     data: [],
     dataChanged: function(oldValue, newValue) {
-      console.log('data update');
       this.redraw();
     },
 
