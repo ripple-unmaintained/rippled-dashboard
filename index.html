@@ -29,10 +29,10 @@
     <!-- FIXME: needs configurable -->
     <data-model id="ledgerModel" endpoint="http://localhost:8181/metric/gauge/ledger">
     </data-model>
-    <simple-gauge data="{{$.ledgerModel.data}}" label="Current Ledger"></simple-gauge>
+    <simple-gauge id="ledgerGauge" label="Current Ledger"></simple-gauge>
     <data-model id="peerModel" endpoint="http://localhost:8181/metric/gauge/peers">
     </data-model>
-    <simple-gauge data="{{$.peerModel.data}}" label="Peers"></simple-gauge>
+    <simple-gauge id="peerGauge" label="Peers"></simple-gauge>
   </div>
 </div>
 </body>

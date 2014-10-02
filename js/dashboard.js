@@ -43,6 +43,13 @@ $(document).ready(function() {
         });
       });
   });
+
+  d3.select('#ledgerModel').on('updated', function() {
+    d3.select('#ledgerGauge').attr('value', d3.select('#ledgerModel').node().currentValue);
+  });
+  d3.select('#peerModel').on('updated', function() {
+    d3.select('#peerGauge').attr('value', d3.select('#peerModel').node().currentValue);
+  });
 });
 
 var DataModel = function() {
@@ -70,6 +77,7 @@ var DataModel = function() {
             this.rawData = d3.entries(json).sort(function (a, b) { return Number(a[0])-Number(b[0]);}).map(function (d) {return d.value});
             this.currentValue = this.rawData[this.rawData.length-1][this.aggregation];
             this.aggregate();
+            this.fire('updated');
         }.bind(this));
       }
     },
@@ -78,6 +86,7 @@ var DataModel = function() {
       var data = this.rawData.map(function(d) {return d[this.aggregation];}, this);
       var mean = data.reduce(function(p, v) { return p + v; }, 0) / data.length;
       this.data = data.map(function(d, i) {return [i, d - mean];});
+      this.fire('aggregated');
     },
 
     resolution: 0,
@@ -115,7 +124,6 @@ var Gauge = function() {
     label: "",
     dataChanged: function(oldValue, newValue) {
       this.value = newValue[0][1];
-      console.log('gauge poll');
     }
   });
 }
