@@ -17,6 +17,9 @@ core-scaffold {
 
 .content {
   background-color: #fff;
+}
+
+#canvas {
   padding: 20px;
 }
 
@@ -24,7 +27,23 @@ core-scaffold[mode=cover] .content {
   margin: 20px 100px 20px 0;
 }
 
+core-scaffold {
+  margin-bottom: 75px;
+}
+
 metrics-chart {
   width: 100%;
   margin-bottom: 2em;
+}
+
+.health-panel {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: #afa;
+  height: 75px;
+}
+
+.health-panel .health-content {
+  padding: 1em;
 }
