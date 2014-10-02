@@ -63,6 +63,10 @@ module.exports = function(grunt) {
       scss: {
         files: ['scss/*.scss'],
         tasks: ['sass:dist']
+      },
+      index: {
+        files: ['index.html'],
+        tasks: ['exec:install-index']
       }
     }
   });

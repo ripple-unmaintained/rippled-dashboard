@@ -22,7 +22,8 @@ function addGraphToMenu(uri, label, category) {
 function addGraphToCanvas(label, uri) {
   var graphCanvas = d3.select('#canvas').insert('metrics-chart', ":first-child");
   graphCanvas.attr('endpoint', uri);
-  graphCanvas.attr('title', label);
+  graphCanvas.attr('label', label);
+  console.log(graphCanvas.attr('label'));
   graphCanvas.on('close', function() {
     graphCanvas.remove();
   });
@@ -44,6 +45,49 @@ $(document).ready(function() {
   });
 });
 
+var DataModel = function() {
+  Polymer('data-model', {
+    endpoint: null,
+    endpointChanged: function(oldValue, newValue) {
+      this.refresh();
+      if (this.interval)
+        clearInterval(this.interval);
+      this.interval = setInterval(this.refresh.bind(this), 1000);
+    },
+    detached: function() {
+      if (this.interval)
+        clearInterval(this.interval);
+    },
+
+    rawData: null,
+    refresh: function() {
+      if (this.endpoint) {
+        d3.json(this.endpoint, function(error, json) {
+            if (error) return console.warn(error);
+            this.rawData = d3.entries(json).sort(function (a, b) { return Number(a[0])-Number(b[0]);}).map(function (d) {return d.value});
+            this.aggregate();
+        }.bind(this));
+      }
+    },
+
+    aggregate: function() {
+      var data = this.rawData.map(function(d) {return d[this.aggregation];}, this);
+      var mean = data.reduce(function(p, v) { return p + v; }, 0) / data.length;
+      this.data = data.map(function(d, i) {return [i, d - mean];});
+    },
+
+    resolution: 0,
+    resolutionChanged: function(oldValue, newValue) {
+      this.refresh();
+    },
+
+    aggregation: 'average',
+    aggregationChanged: function(oldValue, newValue) {
+      this.aggregate();
+    }
+  });
+}
+
 var Category = function() {
   Polymer('chart-category', {
     label: "Uncategorized",
@@ -60,8 +104,40 @@ var Category = function() {
   });
 }
 
+var HorizonChart = function() {
+  Polymer('horizon-chart', {
+    data: [],
+    dataChanged: function(oldValue, newValue) {
+      console.log('data update');
+      this.redraw();
+    },
+
+    domReady: function() {
+      var width = this.clientWidth;
+      var height = this.clientHeight;
+      this.chart = d3.horizon()
+          .width(width)
+          .height(height)
+          .bands(2)
+          .mode("offset")
+          .interpolate("basis");
+      this.svg = d3.select(this.$.svg)
+          .attr("width", width)
+          .attr("height", height)
+      this.redraw();
+    },
+
+    redraw: function() {
+      if (this.svg) {
+        this.svg.data([this.data]).call(this.chart);
+      }
+    },
+  });
+}
+
 var Chart = function() {
   Polymer('metrics-chart', {
+    label: "",
     resolution: 0,
     endpoint: null,
 
@@ -69,67 +145,10 @@ var Chart = function() {
       this.fire('close');
     },
 
-    resolutionChanged: function(oldValue, newValue) {
-      this.refresh();
-    },
-
-    _aggProp: 'average',
-
     selectAggregation: function(e, detail) {
       if (detail.isSelected) {
-        this._aggProp = d3.select(detail.item).attr('data-attrname');
-        this.redraw();
+        this.aggregation = d3.select(detail.item).attr('data-attrname');
       }
     },
-
-    domReady: function() {
-      var width = this.$.canvas.clientWidth;
-      var height = this.$.canvas.clientHeight;
-      this.chart = d3.horizon()
-          .width(width)
-          .height(height)
-          .bands(2)
-          .mode("offset")
-          .interpolate("basis");
-      this.svg = d3.select(this.$.canvas).append("svg")
-          .attr("width", width)
-          .attr("height", height)
-      this.redraw();
-    },
-
-    data: null,
-
-    redraw: function() {
-      if (this.svg && this.data) {
-        var data = this.data.map(function(d) {return d[this._aggProp];}, this);
-        var mean = data.reduce(function(p, v) { return p + v; }, 0) / data.length;
-        console.log(data.reduce(function(p, v) {return p+v}, 0));
-        data = data.map(function(d, i) {return [i, d - mean];});
-
-        this.svg.data([data]).call(this.chart);
-      }
-    },
-
-    refresh: function() {
-      if (this.endpoint) {
-        d3.json(this.endpoint, function(error, json) {
-            if (error) return console.warn(error);
-            this.data = d3.entries(json).sort(function (a, b) { return Number(a[0])-Number(b[0]);}).map(function (d) {return d.value});
-            this.redraw();
-        }.bind(this));
-      }
-    },
-
-    endpointChanged: function(oldValue, newValue) {
-      this.refresh();
-      if (this.interval)
-        clearInterval(this.interval);
-      this.interval = setInterval(this.refresh.bind(this), 1000);
-    },
-
-    detached: function() {
-      if (this.interval)
-        clearInterval(this.interval);
-    }
   });
 }

@@ -4,34 +4,19 @@
       :host {
         display: block;
       }
-      #canvas {
+
+      horizon-chart {
         height: 100px;
         width: 100%;
         padding: 10px;
       }
-      .axis path,
-      .axis line {
-        fill: none;
-        stroke: #000;
-        shape-rendering: crispEdges;
-      }
-
-      .x.axis path {
-        display: none;
-      }
-
-      .line {
-        fill: none;
-        stroke: steelblue;
-        stroke-width: 1.5px;
-      }
 
       h2 {
-        height: 1em;
+        font-size: 1em;
       }
     </style>
     <core-toolbar>
-    <span flex><h2>{{title}}</h2></span>
+      <span flex><h2>{{label}}</h2></span>
       <core-menu-button icon="schedule" selected="{{resolution}}">
         <core-item data-resolution="seconds" label="Seconds"></core-item>
         <core-item data-resolution="minutes" label="Minutes"></core-item>
@@ -45,7 +30,9 @@
       </core-menu-button>
       <core-icon-button icon="close" on-click="{{closeHandler}}"></core-icon-button>
     </core-toolbar>
-    <div id="canvas"></div>
+    <data-model id="model" endpoint="{{endpoint}}" resolution="{{resolution}}" aggregation="{{aggregation}}">
+    </data-model>
+    <horizon-chart data="{{$.model.data}}"></horizon-chart>
   </template>
   <script>
     Chart();
