@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 import sys
 import os
+import subprocess
+
+revision = subprocess.check_output(['git','describe','--always']).strip()
 
 root = sys.argv[1]
 
@@ -8,6 +11,8 @@ out = open(sys.argv[2], 'w')
 
 fileMap = {}
 fileIdx = 0
+
+out.write("// Generated from %s of rippled-dashboard\n"%(revision))
 
 out.write("static const char* file_contents[] = {\n")
 for path, dirs, files in os.walk(sys.argv[1]):
