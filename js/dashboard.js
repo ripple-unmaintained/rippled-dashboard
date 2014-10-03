@@ -16,6 +16,8 @@ function addGraphToMenu(uri, label, category) {
   if (!(category in categories)) {
     var collapse = d3.select('#menu').append('chart-category');
     collapse.attr('label', category);
+    if (category == "Uncategorized")
+      collapse.attr('opened', false);
     categories[category] = collapse;
   }
 
