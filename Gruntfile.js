@@ -1,6 +1,17 @@
 module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+
+    connect: {
+      server: {
+        options: {
+          port: 8000,
+          // from build AND `.` (so source maps links work ;)
+          base: ['build', '.']
+        }
+      }
+    },
+
     sass: {
       dist: {
         options: {
@@ -72,9 +83,10 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-vulcanize');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.registerTask('default', ['exec:install-index', 'vulcanize', 'uglify:dist', 'sass:dist', 'exec:compile-bundle']);
+  grunt.registerTask('default', ['exec:install-index', 'vulcanize', 'uglify:dist', 'sass:dist', 'exec:compile-bundle', 'connect', 'watch']);
 }
